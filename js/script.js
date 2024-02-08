@@ -9,7 +9,7 @@ function generateRandomNumber(maxNumber) {
     return randomNumber;
 }
 
-//creo una function che generi un array di 100 numeri
+//creo una function che generi un array di numeri casuali
 function getRandomNumbersArray(maxNumber) {
     const numbersArray = [];
   
@@ -21,9 +21,7 @@ function getRandomNumbersArray(maxNumber) {
         if( ! numbersArray.includes(newNumber) ) {
             numbersArray.push(newNumber);
         }
-
     }
-  
     return numbersArray;
 }
 
@@ -41,6 +39,7 @@ document.querySelector(".container-fluid").prepend(selectElement);
 //mostro la griglia
 document.querySelector("#container").style.display = "flex";
 
+//creo una funzione che si attivi al click del pulsante Gioca
 document.querySelector("#play").addEventListener("click", function() {
     //mi salvo una const per prendere il valore dell'elemento select
     const difficultyLevel = selectElement.value;
@@ -71,6 +70,25 @@ document.querySelector("#play").addEventListener("click", function() {
     //salvo un array di numeri casuali
     const randomNumbersArray = getRandomNumbersArray(gridSize);
 
+    //creo una function che generi un array di 16 numeri casuali
+    function getRandomBombsArray() {
+        const bombsArray = [];
+    
+        while (bombsArray.length < 16) {
+            //inserisco il numero solo se non è già presente
+            const newBombs = generateRandomNumber(16);
+
+            //controllo se il numero appena generato è già presente dentro il nostro array
+            if( ! bombsArray.includes(newBombs) ) {
+                bombsArray.push(newBombs);
+            }
+        }
+        return bombsArray;
+    }
+
+    //salvo un array di numeri bomba casuali
+    const randomBombsArray = getRandomBombsArray();
+
     // creo la griglia
     for(let i = 0; i < gridSize; i++) {
         // creo un elemento, gli metto la classe "square" e lo aggiungo nella griglia
@@ -91,8 +109,24 @@ document.querySelector("#play").addEventListener("click", function() {
                 
         //aggiungo un event listener ad ogni quadrato che aggiungo
         newElement.addEventListener("click", function() {
-            //con this seleziono lo square e aggiungo o tolgo la class active
-            this.classList.toggle("active");
+
+            if(randomBombsArray.includes(randomNumbersArray[i])) {
+                //se il numero è presente nell'array delle bombe, coloro la cella di rosso e termino la partita
+                this.style.backgroundColor = "red";
+                document.querySelector("#result").innerText = "Hai calpestato una bomba! Game over."
+                
+                //disabilito l'evento click su tutti i quadrati
+                let squares = document.querySelectorAll(".square");
+                
+                squares.forEach(function(square) {
+                    square.style.pointerEvents = "none";
+                });
+    
+            } else {
+                //con this seleziono lo square e aggiungo o tolgo la class active
+                this.classList.toggle("active");
+            }
+            
         });
         
         gridElement.append(newElement);
