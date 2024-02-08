@@ -1,27 +1,38 @@
 // prendo la griglia
 const gridElement = document.querySelector("#grid");
 
-//creo una function che generi un array di 100 numeri ordinati
-function getOrderedNumbersArray() {
+// funzione che genera un numero random
+function generateRandomNumber(maxNumber) {
+    const randomNumber = Math.floor(Math.random() * maxNumber) + 1;
+
+    // restituisco il numero generato
+    return randomNumber;
+}
+
+//creo una function che generi un array di 100 numeri
+function getRandomNumbersArray(maxNumber) {
     const numbersArray = [];
   
-    // Ciclo da 1 a 100 e aggiungo ogni numero all'array
-    for (let i = 1; i <= 100; i++) {
-      numbersArray.push(i);
+    while (numbersArray.length < maxNumber) {
+        //inserisco il numero solo se non è già presente
+        const newNumber = generateRandomNumber(maxNumber);
+
+        //controllo se il numero appena generato è già presente dentro il nostro array
+        if( ! numbersArray.includes(newNumber) ) {
+            numbersArray.push(newNumber);
+        }
+
     }
   
     return numbersArray;
 }
-        
-//salvo un array di numeri ordinati
-const orderNumbersArray = getOrderedNumbersArray();
 
 // Creo la select con 3 livelli di difficoltà
 const selectElement = document.createElement("select");
 selectElement.innerHTML = `
-  <option value="1">Difficoltà 1</option>
-  <option value="2">Difficoltà 2</option>
-  <option value="3">Difficoltà 3</option>
+  <option value="1">Easy</option>
+  <option value="2">Medium</option>
+  <option value="3">Hard</option>
 `;
 
 //aggiungo la select a sinistra del titolo
@@ -57,11 +68,15 @@ document.querySelector("#play").addEventListener("click", function() {
             return;
     }
 
+    //salvo un array di numeri casuali
+    const randomNumbersArray = getRandomNumbersArray(gridSize);
+
     // creo la griglia
-    for(let i = 1; i <= gridSize; i++) {
+    for(let i = 0; i < gridSize; i++) {
         // creo un elemento, gli metto la classe "square" e lo aggiungo nella griglia
         const newElement = document.createElement("div");
         newElement.classList.add("square");
+        newElement.innerText = randomNumbersArray[i];
 
         //in base alla difficoltà visualizzo una griglia diversa tramite le classi container
         if(difficultyLevel == "1") {
@@ -72,11 +87,8 @@ document.querySelector("#play").addEventListener("click", function() {
 
         } else {
             document.querySelector("#container").classList.add("container-third")
-
         }
-        
-        newElement.innerText = i;
-        
+                
         //aggiungo un event listener ad ogni quadrato che aggiungo
         newElement.addEventListener("click", function() {
             //con this seleziono lo square e aggiungo o tolgo la class active
@@ -85,4 +97,10 @@ document.querySelector("#play").addEventListener("click", function() {
         
         gridElement.append(newElement);
     }
+
+
+
+
+
+
 });
